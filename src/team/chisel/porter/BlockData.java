@@ -13,8 +13,4 @@ public class BlockData {
         this.name = name;
         this.variations = variations;
     }
-
-    public BlockData(String name, File directory){
-
-    }
 }
