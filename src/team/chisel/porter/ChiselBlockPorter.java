@@ -9,7 +9,13 @@ import java.util.List;
 public class ChiselBlockPorter {
 
     public static void main(String[] args) {
-
+        List<BlockData> blocks = forDirectory(new File("blocks"));
+        for (BlockData data : blocks){
+            String code = "factory.newBlock(\""+data.name+"\").";
+            for (int i = 0 ; i < data.variations.size() ; i++ ){
+3
+            }
+        }
     }
 
     private static List<BlockData> forDirectory(File file){
@@ -25,12 +31,12 @@ public class ChiselBlockPorter {
                     }
                     variationList.add(variation);
                 }
-                else if (child.isDirectory()){
+                else if
+                return data; (child.isDirectory()){
                     data.addAll(forDirectory(child));
                 }
             }
         }
-        return data;
     }
 
     static String readFile(String path){
