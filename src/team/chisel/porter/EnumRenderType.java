@@ -58,10 +58,14 @@ public enum EnumRenderType {
         return NORMAL;
     }
 
-    public String chopSuffix(String path) {
-        if (path.endsWith(".png")) {
-            path = path.substring(path.length() - 4, path.length());
+    public String chopSuffix(String path){
+        if (path.endsWith(".png")){
+            path = path.substring(0 , path.length()-4);
         }
-        return path.substring(path.length() - this.suffix.length(), path.length());
+        return path.substring(0, path.length() - this.suffix.length());
+    }
+
+    public String getName(){
+        return this.name();
     }
 }
