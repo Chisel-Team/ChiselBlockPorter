@@ -16,6 +16,7 @@ public class ChiselBlockPorter {
 
     public static final String BLOCK_CODE = "factory.newBlock(Material.rock, \"%s\", creator, BlockCarvable.class)";
     public static final String NEW_VARIATION_CODE = ".newVariation(\"%s\",\"%s\")";
+    public static final String ONLY_VARIATION_CODE = NEW_VARIATION_CODE+".build();";
     public static final String NEXT_VARIATION_CODE = ".next(\"%s\",\"%s\")";
     public static final String FINAL_VARIATION_CODE = NEXT_VARIATION_CODE + ".build();";
 
@@ -34,6 +35,12 @@ public class ChiselBlockPorter {
         for (BlockData data : blocks) {
             String code = String.format(BLOCK_CODE, data.name);
             System.out.println("Block " + data.name + " has " + data.variations.size() + " different variations");
+            if (data.variations.size() == 1){
+                BlockVariation var = data.variations.get(0);
+                code += String.format(ONLY_VARIATION_CODE, var.name, data.name);
+                allCode.add(code);
+                continue;
+            }
             for (int i = 0; i < data.variations.size(); i++) {
                 BlockVariation var = data.variations.get(i);
                 String template = i == 0 ? NEW_VARIATION_CODE : i == data.variations.size() - 1 ? FINAL_VARIATION_CODE : NEXT_VARIATION_CODE;
