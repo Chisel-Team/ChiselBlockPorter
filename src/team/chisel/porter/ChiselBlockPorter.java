@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -16,9 +17,10 @@ public class ChiselBlockPorter {
 
     public static final String BLOCK_CODE = "factory.newBlock(Material.rock, \"%s\", creator, BlockCarvable.class)";
     public static final String NEW_VARIATION_CODE = ".newVariation(\"%s\",\"%s\")";
-    public static final String ONLY_VARIATION_CODE = NEW_VARIATION_CODE+".build();";
+    public static final String BUILD = ".build()";
+    public static final String ONLY_VARIATION_CODE = NEW_VARIATION_CODE + BUILD;
     public static final String NEXT_VARIATION_CODE = ".next(\"%s\",\"%s\")";
-    public static final String FINAL_VARIATION_CODE = NEXT_VARIATION_CODE + ".build();";
+    public static final String FINAL_VARIATION_CODE = NEXT_VARIATION_CODE + BUILD;
 
     public static final Path INPUT_FOLDER = Paths.get("blocks");
     public static final Path OUTPUT_FOLDER = Paths.get("output");
@@ -35,23 +37,18 @@ public class ChiselBlockPorter {
         for (BlockData data : blocks) {
             String code = String.format(BLOCK_CODE, data.name);
             System.out.println("Block " + data.name + " has " + data.variations.size() + " different variations");
-            if (data.variations.size() == 1){
-                BlockVariation var = data.variations.get(0);
-                code += String.format(ONLY_VARIATION_CODE, var.name, data.name);
-                allCode.add(code);
-                continue;
-            }
             for (int i = 0; i < data.variations.size(); i++) {
                 BlockVariation var = data.variations.get(i);
-                String template = i == 0 ? NEW_VARIATION_CODE : i == data.variations.size() - 1 ? FINAL_VARIATION_CODE : NEXT_VARIATION_CODE;
+                String template = data.variations.size() == 1 ? ONLY_VARIATION_CODE : i == 0 ? NEW_VARIATION_CODE : i == data.variations.size() - 1 ? FINAL_VARIATION_CODE : NEXT_VARIATION_CODE;
                 code += String.format(template, var.name, data.name);
                 
-//                Path cbOutput = MODEL_PATH.resolve(Paths.get(data.name, var.name + ".cf"));
-//                FileUtils.writeLines(cbOutput.toFile(), var.getFaceFile());
-//                
-//                Path textureFolder = TEXTURE_PATH.resolve(data.name);
-//                FileUtils.writeLines(textureFolder.resolve(var.name + ".ctx").toFile(), var.getTexFile());
-//                FileUtils.copyFile(var.textureFile, textureFolder.resolve(var.name + ".png").toFile());
+                Path cbOutput = MODEL_PATH.resolve(Paths.get(data.name, var.name + ".cf"));
+                FileUtils.writeLines(cbOutput.toFile(), var.getFaceFile());
+                
+                Path textureFolder = TEXTURE_PATH.resolve(data.name);
+                FileUtils.writeLines(textureFolder.resolve(var.name + ".ctx").toFile(), var.getTexFile());
+                FileUtils.copyFile(var.textureFile, textureFolder.resolve(var.name + ".png").toFile());
+                System.out.println(Arrays.toString(var.renderType.getAdditionalFiles(var.textureFile)));
             }
             allCode.add(code);
         }
@@ -66,12 +63,15 @@ public class ChiselBlockPorter {
             for (File child : file.listFiles()) {
                 if (child.getName().endsWith(".png")) {
                     System.out.println("Doing for file " + child.getAbsolutePath());
-                    BlockVariation variation = new BlockVariation(child);
-                    File mcmetaFile = new File(child.getPath() + ".mcmeta");
-                    if (mcmetaFile.exists()) {
-                        variation.setMeta(readFile(mcmetaFile.getPath()));
+                    EnumRenderType type = EnumRenderType.forPath(child.getPath());
+                    if (type != null) {
+                        BlockVariation variation = new BlockVariation(child);
+                        File mcmetaFile = new File(child.getPath() + ".mcmeta");
+                        if (mcmetaFile.exists()) {
+                            variation.setMeta(readFile(mcmetaFile.getPath()));
+                        }
+                        variationList.add(variation);
                     }
-                    variationList.add(variation);
                 } else if (child.isDirectory()) {
                     data.addAll(forDirectory(child));
                 }

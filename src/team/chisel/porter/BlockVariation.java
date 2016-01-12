@@ -39,7 +39,7 @@ public class BlockVariation {
         return tabsToSpaces(
                 "{", 
                 "\t\"children\":[", 
-                "\t\t\"./name.ctx\"", 
+                "\t\t\"./" + name + ".ctx\"", 
                 "\t]", 
                 "}"
         );

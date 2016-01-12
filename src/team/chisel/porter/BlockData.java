@@ -1,6 +1,5 @@
 package team.chisel.porter;
 
-import java.io.File;
 import java.util.List;
 
 public class BlockData {

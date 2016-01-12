@@ -3,11 +3,13 @@ package team.chisel.porter;
 import java.io.File;
 import java.util.function.Function;
 
+import org.apache.commons.lang.ArrayUtils;
+
 public enum EnumRenderType {
     NORMAL(""),
-    CTM("-ctm"),
-    CTMV("-ctmv"),
-    CTMH("-ctmh", f -> new File[] { new File(f.getPath().replace("-ctmh", "-top")) }),
+    CTM("-ctm", f -> new File[] { new File(f.getPath().replace("-ctm", "")) }),
+    CTMV("-ctmv", f -> new File[] { new File(f.getPath().replace("-ctmh", "-top")) }),
+    CTMH("-ctmh", CTMV.fileFunc),
     V4("-v4"),
     V9("-v9"),
     R4("-r4"),
@@ -30,7 +32,7 @@ public enum EnumRenderType {
     private Function<File, File[]> fileFunc;
 
     private EnumRenderType(String suffix) {
-        this(suffix, f -> new File[] { f });
+        this(suffix, f -> new File[0]);
     }
 
     private EnumRenderType(String suffix, Function<File, File[]> fileFunc) {
@@ -48,10 +50,10 @@ public enum EnumRenderType {
     }
 
     public static EnumRenderType forPath(String path) {
-        for (EnumRenderType type : ROOTS) {
+        for (EnumRenderType type : values()) {
             if (type != NORMAL) {
                 if (type.isValid(path)) {
-                    return type;
+                    return ArrayUtils.contains(ROOTS, type) ? type : null;
                 }
             }
         }
