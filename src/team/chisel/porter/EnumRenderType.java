@@ -1,5 +1,7 @@
 package team.chisel.porter;
 
+import java.util.Locale;
+
 public enum EnumRenderType {
     NORMAL(""),
     CTM("-ctm"),
@@ -37,8 +39,12 @@ public enum EnumRenderType {
 
     public String chopSuffix(String path){
         if (path.endsWith(".png")){
-            path = path.substring(path.length()-4, path.length());
+            path = path.substring(0 , path.length()-4);
         }
-        return path.substring(path.length() - this.suffix.length(), path.length());
+        return path.substring(0, path.length() - this.suffix.length());
+    }
+
+    public String getName(){
+        return this.name();
     }
 }
