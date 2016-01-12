@@ -35,7 +35,7 @@ public class BlockVariation {
         this.mcmeta = mcmeta;
     }
 
-    public List<String> getCBFile(){
+    public List<String> getFaceFile(){
         return tabsToSpaces(
                 "{", 
                 "\t\"children\":[", 
@@ -45,7 +45,7 @@ public class BlockVariation {
         );
     }
 
-    public List<String> getCTXFile(){
+    public List<String> getTexFile(){
         if (renderType == EnumRenderType.CTM) {
             return tabsToSpaces(
                     "{", 

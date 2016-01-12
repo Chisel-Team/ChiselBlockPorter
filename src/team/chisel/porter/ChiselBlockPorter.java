@@ -15,7 +15,9 @@ import com.google.common.collect.Lists;
 public class ChiselBlockPorter {
 
     public static final String BLOCK_CODE = "factory.newBlock(Material.rock, \"%s\", creator, BlockCarvable.class)";
-    public static final String VARIATION_CODE = ".newVariation(\"%s\",\"%s\").setTextureLocation(new ResourceLocation(\"chisel\",\"%s/%s\")).buildVariation()";
+    public static final String NEW_VARIATION_CODE = ".newVariation(\"%s\",\"%s\")";
+    public static final String NEXT_VARIATION_CODE = ".next(\"%s\",\"%s\")";
+    public static final String FINAL_VARIATION_CODE = NEXT_VARIATION_CODE + ".build();";
 
     public static final Path INPUT_FOLDER = Paths.get("blocks");
     public static final Path OUTPUT_FOLDER = Paths.get("output");
@@ -34,17 +36,15 @@ public class ChiselBlockPorter {
             System.out.println("Block " + data.name + " has " + data.variations.size() + " different variations");
             for (int i = 0; i < data.variations.size(); i++) {
                 BlockVariation var = data.variations.get(i);
-                code += String.format(VARIATION_CODE, var.name, data.name, data.name, var.name);
-                if (i == data.variations.size() - 1) {
-                    code += ".build()";
-                }
+                String template = i == 0 ? NEW_VARIATION_CODE : i == data.variations.size() - 1 ? FINAL_VARIATION_CODE : NEXT_VARIATION_CODE;
+                code += String.format(template, var.name, data.name);
                 
-                Path cbOutput = MODEL_PATH.resolve(Paths.get(data.name, var.name + ".cb"));
-                FileUtils.writeLines(cbOutput.toFile(), var.getCBFile());
-                
-                Path textureFolder = TEXTURE_PATH.resolve(data.name);
-                FileUtils.writeLines(textureFolder.resolve(var.name + ".ctx").toFile(), var.getCTXFile());
-                FileUtils.copyFile(var.textureFile, textureFolder.resolve(var.name + ".png").toFile());
+//                Path cbOutput = MODEL_PATH.resolve(Paths.get(data.name, var.name + ".cf"));
+//                FileUtils.writeLines(cbOutput.toFile(), var.getFaceFile());
+//                
+//                Path textureFolder = TEXTURE_PATH.resolve(data.name);
+//                FileUtils.writeLines(textureFolder.resolve(var.name + ".ctx").toFile(), var.getTexFile());
+//                FileUtils.copyFile(var.textureFile, textureFolder.resolve(var.name + ".png").toFile());
             }
             allCode.add(code);
         }
@@ -69,8 +69,10 @@ public class ChiselBlockPorter {
                     data.addAll(forDirectory(child));
                 }
             }
-            BlockData block = new BlockData(file.getName(), variationList);
-            data.add(block);
+            if (!variationList.isEmpty()) {
+                BlockData block = new BlockData(file.getName(), variationList);
+                data.add(block);
+            }
         }
         return data;
     }
