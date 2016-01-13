@@ -18,7 +18,7 @@ public class ChiselBlockPorter {
 
     public static final String BLOCK_CODE = "factory.newBlock(Material.rock, \"%s\", creator, BlockCarvable.class)";
     public static final String NEW_VARIATION_CODE = ".newVariation(\"%s\",\"%s\")";
-    public static final String BUILD = ".build()";
+    public static final String BUILD = ".build();";
     public static final String ONLY_VARIATION_CODE = NEW_VARIATION_CODE + BUILD;
     public static final String NEXT_VARIATION_CODE = ".next(\"%s\",\"%s\")";
     public static final String FINAL_VARIATION_CODE = NEXT_VARIATION_CODE + BUILD;
