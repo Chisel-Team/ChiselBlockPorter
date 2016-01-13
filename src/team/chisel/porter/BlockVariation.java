@@ -43,7 +43,7 @@ public class BlockVariation {
     public List<String> getFaceFile(){
         return tabsToSpaces(
                 "{", 
-                "\t\"children\":[", 
+                "\t\"textures\":[", 
                 "\t\t\"./" + name + ".ctx\"", 
                 "\t]", 
                 "}"
