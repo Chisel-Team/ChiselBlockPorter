@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import org.apache.commons.lang.ArrayUtils;
 
-public enum EnumRenderType {
+public enum RenderType {
     NORMAL(""),
     CTM("-ctm", f -> new File[] { new File(f.getPath().replace("-ctm", "")) }),
     CTMV("-ctmv", f -> new File[] { new File(f.getPath().replace("-ctmh", "-top")) }),
@@ -26,16 +26,16 @@ public enum EnumRenderType {
     BOT("-bot"),
     SIDE("-side");
 
-    private static final EnumRenderType[] ROOTS = new EnumRenderType[] { NORMAL, CTM, CTMV, CTMH, V4, V9, R4, R9, R16, TOP };
+    private static final RenderType[] ROOTS = new RenderType[] { NORMAL, CTM, CTMV, CTMH, V4, V9, R4, R9, R16, TOP };
 
     private String suffix;
     private Function<File, File[]> fileFunc;
 
-    private EnumRenderType(String suffix) {
+    private RenderType(String suffix) {
         this(suffix, f -> new File[0]);
     }
 
-    private EnumRenderType(String suffix, Function<File, File[]> fileFunc) {
+    private RenderType(String suffix, Function<File, File[]> fileFunc) {
         this.suffix = suffix;
         this.fileFunc = fileFunc;
     }
@@ -49,8 +49,8 @@ public enum EnumRenderType {
         return fileFunc.apply(root);
     }
 
-    public static EnumRenderType forPath(String path) {
-        for (EnumRenderType type : values()) {
+    public static RenderType forPath(String path) {
+        for (RenderType type : values()) {
             if (type != NORMAL) {
                 if (type.isValid(path)) {
                     return ArrayUtils.contains(ROOTS, type) ? type : null;
